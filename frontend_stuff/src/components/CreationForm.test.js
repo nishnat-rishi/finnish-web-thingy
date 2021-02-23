@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { fireEvent, prettyDOM, render } from '@testing-library/react'
+import React from 'react'
+import { fireEvent, render } from '@testing-library/react'
 import CreationForm from './CreationForm'
 
 describe('<CreationForm />', () => {
