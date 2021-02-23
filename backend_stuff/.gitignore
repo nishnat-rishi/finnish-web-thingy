@@ -1,0 +1,8 @@
+node_modules
+_backup
+package.json
+package-lock.json
+Procfile
+jest.config.js
+.eslintrc.js
+.eslintignore

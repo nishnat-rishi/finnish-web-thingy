@@ -1,0 +1,16 @@
+PUT http://localhost:3001/api/notes/6029004c776f9934587ec774
+Content-Type: application/json
+
+{
+  "content": "Callback functions suck!",
+  "important": false
+}
+
+###
+PUT http://localhost:3001/api/notes/6029004c776f9934587ec774
+Content-Type: application/json
+
+{
+  "content": "Callback functions suck less!",
+  "important": true
+}
