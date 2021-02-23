@@ -36,7 +36,7 @@ const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => 
   return (
     <div>
       <h2>Create New Blog</h2>
-      <form onSubmit={handleCreation}>
+      <form id='creationForm' onSubmit={handleCreation}>
         <table>
           <tbody>
             <tr>
@@ -45,6 +45,7 @@ const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => 
               </td>
               <td>
                 <input
+                  id='title'
                   type='text'
                   value={title}
                   name='Title'
@@ -58,6 +59,7 @@ const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => 
               </td>
               <td>
                 <input
+                  id='author'
                   type='text'
                   value={author}
                   name='Author'
@@ -71,6 +73,7 @@ const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => 
               </td>
               <td>
                 <input
+                  id='url'
                   type='text'
                   value={url}
                   name='Url'
