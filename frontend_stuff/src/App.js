@@ -1,101 +1,74 @@
 import React, { useState, useEffect, useRef } from 'react'
+import blogService from './services/blogs'
 
-import Note from './components/Note'
 import Notification from './components/Notification'
-import Footer from './components/Footer'
+import Blogs from './components/Blogs'
 import LoginForm from './components/LoginForm'
-import NoteForm from './components/NoteForm'
+import CreationForm from './components/CreationForm'
 import Togglable from './components/Togglable'
 
-import noteService from './services/notes'
-
 const App = () => {
-  const [notes, setNotes] = useState([])
-  const [showAll, setShowAll] = useState(true)
+  // There HAS to be a way to add a function over this setBlogs!!!
+  // Otherwise we have to add a .slice().sort(...) everywhere we use setBlogs
+  // instead of it automatically happening!!!
+
+  const [blogs, setBlogsRaw] = useState([])
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    noteService.getAll().then((initialNotes) => {
-      setNotes(initialNotes)
-    })
+  const creationFormRef = useRef()
+  const notificationRef = useRef()
+
+  const setBlogs = (newBlogs) => {
+    setBlogsRaw(
+      newBlogs
+        .slice()
+        .sort((b1, b2) => b2.likes - b1.likes)
+    )
+  }
+
+  useEffect(async () => {
+    const retrievedBlogs = await blogService.getAll()
+    setBlogs(retrievedBlogs)
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      noteService.setToken(user.token)
+      blogService.setToken(user.token)
     }
   }, [])
 
-  const noteFormRef = useRef()
-  const notificationRef = useRef()
-
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important)
-
-  const toggleImportanceOf = (id) => {
-    const note = notes.find((n) => n.id === id)
-    const changedNote = { ...note, important: !note.important }
-
-    noteService
-      .update(id, changedNote)
-      .then((returnedNote) => {
-        setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)))
-      })
-      .catch((error) => {
-        notificationRef.current.show(error.response.data.error, 'failure')
-      })
-  }
-
-  const addNote = (newNoteObject) => {
-    noteFormRef.current.toggleVisibility()
-    noteService
-      .create(newNoteObject)
-      .then((returnedNote) => {
-        setNotes(notes.concat(returnedNote))
-      })
-  }
-
-  return (
+  return <div>
+    <h1>Welcome to Bloglist!</h1>
+    <Notification ref={notificationRef}/>
+    <LoginForm
+      user={user}
+      setUser={setUser}
+      notificationRef={notificationRef}
+    />
+    {user &&
     <div>
-      <h1>Notes</h1>
-      <Notification />
-
       <Togglable
-        showLabel={user ? 'Show User' : 'Login'}
-        hideLabel={user ? 'Hide User' : 'Cancel'}
-      >
-        <LoginForm
-          user={user}
-          setUser={setUser}
+        showLabel='Create New Blog'
+        hideLabel='Hide'
+        ref={creationFormRef}>
+        <CreationForm
+          blogs={blogs}
+          setBlogs={setBlogs}
           notificationRef={notificationRef}
+          creationFormRef={creationFormRef}
         />
       </Togglable>
-
-      {
-        user &&
-        <Togglable showLabel='New Note' hideLabel='Hide' ref={noteFormRef}>
-          <NoteForm createNote={addNote} />
-        </Togglable>
-      }
-      <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
-        </button>
-      </div>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note
-            key={note.id}
-            note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
-          />
-        ))}
-      </ul>
-      <Footer />
-    </div>
-  )
+      <Blogs
+        user={user}
+        blogs={blogs}
+        setBlogs={setBlogs}
+        notificationRef={notificationRef}
+      />
+    </div>}
+  </div>
 }
 
 export default App

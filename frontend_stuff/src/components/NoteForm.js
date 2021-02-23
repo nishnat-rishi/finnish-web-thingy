@@ -1,27 +1,43 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const NoteForm = ({ createNote }) => {
+import noteService from '../services/notes'
+
+const NoteForm = ({ user, notes, setNotes }) => {
   const [newNote, setNewNote] = useState('')
 
   const handleNoteChange = (event) => setNewNote(event.target.value)
 
   const addNote = (event) => {
     event.preventDefault()
-
-    createNote({
+    const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-    })
+    }
 
-    setNewNote('')
+    noteService
+      .create(noteObject)
+      .then((returnedNote) => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
   }
 
-  return (
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={handleNoteChange} />
-      <button type='submit'>Save</button>
-    </form>
-  )
+  if (!user) {
+    return (<></>)
+  } else {
+    return (
+      <form onSubmit={addNote}>
+        <input value={newNote} onChange={handleNoteChange} />
+        <button type='submit'>Save</button>
+      </form>
+    )
+  }
+
+}
+
+NoteForm.propTypes = {
+  setNotes: PropTypes.func.isRequired
 }
 
 export default NoteForm

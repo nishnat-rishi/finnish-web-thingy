@@ -12,46 +12,45 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    request.token = authorization.substring(7)
+  }
+  next()
+}
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
 const errorHandler = (error, request, response, next) => {
 
+  logger.error(error.name, error.message)
+
   if (error.name === 'CastError') {
-    return response.status(400).json({ error: 'malformatted id.' })
+    return response.status(400).send({ error: '`id` should be a valid id!' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+    return response.status(400).send({ error: error.message })
   } else if (error.name === 'PasswordValidationError') {
-    // Can be merged with the above *(1)
-    return response.status(400).json({ error: error.message })
+    return response.status(400).send({ error: error.message })
   } else if (error.name === 'LoginError') {
-    return response.status(401).json({ error: error.message })
+    return response.status(401).send({ error: error.message })
   } else if (error.name === 'TokenError') {
-    return response.status(401).json({ error: error.message })
-  }else if (error.name === 'JsonWebTokenError') {
-    return response.status(400).json({ error: 'invalid token.' })
+    return response.status(401).send({ error: error.message })
+  } else if (error.name === 'DoesNotExistError') {
+    return response.status(404).send({ error: error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    return response.status(400).send({ error: error.message })
   }
-
-  logger.error(error.toString())
-
-  next(error)
+  // *_Maybe_* it would be nice to have a default handler. Perhaps 204 (No Content)?
+  // return response.status(204).end()?
+  // Maybe not.
 }
 
 module.exports = {
   requestLogger,
+  tokenExtractor,
   unknownEndpoint,
   errorHandler
 }
-
-////////// Comment expansions //////////
-
-// (1)
-// This could be merged with the above validation error.
-// The only reason it's separate is because the source of the error
-// is different. The error above is generated due to mongoose schema validation
-// checks, whereas this error is generated from the notesRouter.post(...) method.
-// although technically mongoose is checking these things in the backend and not at
-// the db level (perhaps?). Once it's established that there's no fundamental difference
-// between the mongoose validation error and a thrown validation error from the
-// router handlers, we can easily merge them into one 'ValidationError'.

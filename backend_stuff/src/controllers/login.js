@@ -1,7 +1,9 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
+// const logger = require('../utils/logger')
 
 loginRouter.post('/', async (request, response, next) => {
   const body = request.body
@@ -9,26 +11,39 @@ loginRouter.post('/', async (request, response, next) => {
   const e = new Error()
   e.name = 'LoginError'
 
-  const user = await User.findOne({ username: body.username })
-  const passwordCorrect = user === null
-    ? false
-    : await bcrypt.compare(body.password, user.passwordHash)
-
-  if (!(user && passwordCorrect)) {
-    e.message = 'invalid username or password.'
+  if (!body.username || !body.password) {
+    e.message = '`username` and `password` are required fields.'
     throw e
   }
 
-  const userForToken = {
-    username: user.username,
-    id: user._id,
+  const user = await User.findOne({ username: body.username })
+
+  if (!user) {
+    e.message = 'username is not in the database.'
+    throw e
   }
 
-  const token = jwt.sign(userForToken, process.env.SECRET)
+  const passwordCorrect = await bcrypt.compare(body.password, user.passwordHash)
 
-  response
-    .status(200)
-    .send({ token, username: user.username, name: user.name })
+  if (!passwordCorrect) {
+    e.message = 'Password is incorrect.'
+    throw e
+  }
+
+  const tokenInfo = {
+    username: user.username,
+    id: user._id
+  }
+
+  const token = jwt.sign(tokenInfo, process.env.SECRET)
+
+  const tokenResponse = {
+    token,
+    username: user.username,
+    name: user.name
+  }
+
+  response.status(201).json(tokenResponse)
 })
 
 module.exports = loginRouter

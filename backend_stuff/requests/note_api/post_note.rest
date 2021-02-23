@@ -1,8 +1,0 @@
-POST http://localhost:3001/api/notes HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1a2VtYXRoZXJzb24yOCIsImlkIjoiNjAyZWI2N2MwYTA4OGIwMmIwZTNiMmUzIiwiaWF0IjoxNjEzNjk1OTQ0fQ._KwH-Qwtg89bab_W98f1E8N1jPhl3T9jIKIinT_XNRc
-
-{
-  "content": "This is an authorized note!",
-  "important": true
-}

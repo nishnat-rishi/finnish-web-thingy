@@ -5,16 +5,20 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
+    required: true,
     minLength: 3,
     maxLength: 25,
     match: /^\w*$/ // not forcing users to have usernames without number as first character.
   },
   name: String,
-  passwordHash: String,
-  notes: [
+  passwordHash: {
+    type: String,
+    required: true
+  },
+  blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note'
+      ref: 'Blog'
     }
   ],
 })

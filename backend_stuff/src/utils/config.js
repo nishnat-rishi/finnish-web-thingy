@@ -1,13 +1,13 @@
 require('dotenv').config()
 
+let BLOGLIST_MONGODB_URI = process.env.BLOGLIST_MONGODB_URI
 const PORT = process.env.PORT
-let NOTEAPP_MONGODB_URI = process.env.NOTEAPP_MONGODB_URI
 
 if (process.env.NODE_ENV === 'test') {
-  NOTEAPP_MONGODB_URI = process.env.NOTEAPP_TEST_MONGODB_URI
+  BLOGLIST_MONGODB_URI = process.env.BLOGLIST_TEST_MONGODB_URI
 }
 
 module.exports = {
-  NOTEAPP_MONGODB_URI,
+  BLOGLIST_MONGODB_URI,
   PORT
 }

@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 
 import loginService from '../services/login'
-import noteService from '../services/notes'
+import blogService from '../services/blogs'
 
 const LoginForm = ({ user, setUser, notificationRef }) => {
   const [username, setUsername] = useState('')
@@ -18,20 +17,24 @@ const LoginForm = ({ user, setUser, notificationRef }) => {
       })
 
       window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
+        'loggedBloglistUser', JSON.stringify(user)
       )
 
-      noteService.setToken(user.token)
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
-      notificationRef.current.show('Wrong credentials.', 'failure')
+      notificationRef.current.show(
+        'Wrong credentials.',
+        'failure'
+      )
     }
   }
 
   const handleLogout = async () => {
-    window.localStorage.removeItem('loggedNoteappUser')
+    window.localStorage.removeItem('loggedBloglistUser')
+    blogService.setToken(null) // is this necessary?
     setUser(null)
   }
 
@@ -42,9 +45,10 @@ const LoginForm = ({ user, setUser, notificationRef }) => {
           <strong>{user.name}</strong>
           <em> logged-in.</em>
         </div>
+
         <div>
           <button onClick={handleLogout}>
-        Logout
+          Logout
           </button>
         </div>
       </div>
@@ -53,7 +57,7 @@ const LoginForm = ({ user, setUser, notificationRef }) => {
     return (
       <form onSubmit={handleLogin}>
         <div>
-          Username:
+            Username:
           <input
             type='text'
             value={username}
@@ -73,11 +77,7 @@ const LoginForm = ({ user, setUser, notificationRef }) => {
       </form>
     )
   }
-}
 
-LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired,
-  notificationRef: PropTypes.object.isRequired
 }
 
 export default LoginForm

@@ -1,0 +1,25 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1a2VtYXRoZXJzb24yOCIsImlkIjoiNjAyZjQwYTQwYmZjNWMzMzhjZDRlMzYxIiwiaWF0IjoxNjEzNzE0NDUyfQ.Qdrj5cohH9bGLwAIuprrgS_BctXFYzHlgKpxc0G9RsY
+
+{
+  "author": "Anotha",
+  "title": "This is the most certified one can be again!!!!!!",
+  "url": "www.joke.com",
+  "likes": 276,
+  "user": "602f40a40bfc5c338cd4e361"
+}
+
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYwMmY0OGUxMmVhMzk3MjUwNDYzYWY5NyIsImlhdCI6MTYxMzcxNTIxOX0.QHSZhxeBYL6cqosqbCLGBUXdtaSmgKtI5-h3DPghamc
+
+{
+  "author": "Anotha",
+  "title": "Post by root!",
+  "url": "www.joke.com",
+  "likes": 276,
+  "user": "602f48e12ea397250463af97"
+}
