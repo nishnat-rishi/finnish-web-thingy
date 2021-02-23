@@ -5,6 +5,8 @@ public
 .env
 .eslintignore
 .eslintrc.js
+jest.config.js
+jsconfig.json
 package-lock.json
 package.json
 README.md

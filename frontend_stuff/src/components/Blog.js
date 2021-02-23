@@ -16,7 +16,7 @@ const Blog = ({ blog, removable, likeHandler, removeHandler }) => {
           {' '}
           <button onClick={likeHandler}>Like</button>
         </p>
-        <p>{blog.user ? blog.user.name : <em>Pre-user blog!</em>}</p>
+        <p>{blog.user.name}</p>
         <p>
           <button onClick={toggleDetails}>Hide</button>
         </p>
