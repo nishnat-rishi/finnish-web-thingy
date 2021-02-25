@@ -29,7 +29,7 @@ const Blogs = ({ blogs, setBlogs, user, notificationRef }) => {
   }
 
   return (
-    <div>
+    <div id='blog-list'>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog

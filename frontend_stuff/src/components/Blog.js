@@ -11,7 +11,7 @@ const Blog = ({ blog, removable, likeHandler, removeHandler }) => {
       <div className='blog'>
         <p>{blog.title} - <em>{blog.author}</em></p>
         <p>{blog.url}</p>
-        <p>
+        <p className='likes'>
           {blog.likes}
           {' '}
           <button onClick={likeHandler}>Like</button>

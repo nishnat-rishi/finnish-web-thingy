@@ -26,10 +26,10 @@ const App = () => {
     )
   }
 
-  useEffect(async () => {
+  useEffect(() => (async () => {
     const retrievedBlogs = await blogService.getAll()
     setBlogs(retrievedBlogs)
-  }, [])
+  })(), [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
