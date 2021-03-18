@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
+import { chain } from 'lodash'
+
 import blogService from '../../services/blogs'
 
 export const fetchInitialBlogs = createAsyncThunk(
@@ -57,9 +59,18 @@ const blogSlice = createSlice({
   }
 })
 
-export const selectArrangedBlogs = state => state
+export const selectRawBlogs = state => state
   .blogs
-  .slice()
-  .sort((b1, b2) => b2.likes - b1.likes)
 
+export const selectArrangedBlogs = state =>
+  selectRawBlogs(state)
+    .slice()
+    .sort((b1, b2) => b2.likes - b1.likes)
+
+export const selectUsers = state =>
+  chain(
+    state.blogs.map(blog => [ blog.user.id, blog.user ])
+  )
+    .fromPairs()
+    .value()
 export default blogSlice

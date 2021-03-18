@@ -23,7 +23,7 @@ describe('<CreationForm />', () => {
     // with the form in order to clean up <App />, we won't be able to test this without
     // a companion inclusion of blogService with a correct token as well.
 
-    const [blogs, setBlogs] = [[], jest.fn()]
+    const [ blogs, setBlogs ] = [ [], jest.fn() ]
 
     const notificationRef = {
       current: {
