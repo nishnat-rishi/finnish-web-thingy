@@ -1,41 +1,37 @@
 import React, { useState } from 'react'
 
-import loginService from '../services/login'
-import blogService from '../services/blogs'
+import { loginUser, logoutUser, selectUser } from '../features/user/userSlice'
 
-const LoginForm = ({ user, setUser, notificationRef }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+import { useDispatch, useSelector } from 'react-redux'
+
+const LoginForm = ({ notificationRef }) => {
+
+  const dispatch = useDispatch()
+
+  const user = useSelector(selectUser)
+
+  const [ username, setUsername ] = useState('')
+  const [ password, setPassword ] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
-    try {
-      const user = await loginService.login({
-        username,
-        password
-      })
-
-      window.localStorage.setItem(
-        'loggedBloglistUser', JSON.stringify(user)
-      )
-
-      blogService.setToken(user.token)
-      setUser(user)
+    dispatch(loginUser({
+      username,
+      password
+    })).then(() => {
       setUsername('')
       setPassword('')
-    } catch (exception) {
+    }).catch(() => {
       notificationRef.current.show(
         'Wrong credentials.',
         'failure'
       )
-    }
+    })
   }
 
-  const handleLogout = async () => {
-    window.localStorage.removeItem('loggedBloglistUser')
-    blogService.setToken(null) // is this necessary?
-    setUser(null)
+  const handleLogout = () => {
+    dispatch(logoutUser())
   }
 
   if (user) {

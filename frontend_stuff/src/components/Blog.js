@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 const Blog = ({ blog, removable, likeHandler, removeHandler }) => {
-  const [detailsVisible, setDetailsVisible] = useState(false)
+  const [ detailsVisible, setDetailsVisible ] = useState(false)
 
   const toggleDetails = () => setDetailsVisible(!detailsVisible)
 

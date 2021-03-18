@@ -1,36 +1,34 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
 
-const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+import { addBlog } from '../features/blog/blogSlice'
 
-  const handleCreation = async (event) => {
+const CreationForm = ({ notificationRef, creationFormRef }) => {
+
+  const dispatch = useDispatch()
+
+  const [ title, setTitle ] = useState('')
+  const [ author, setAuthor ] = useState('')
+  const [ url, setUrl ] = useState('')
+
+  const handleCreation = (event) => {
     event.preventDefault()
-    try {
-      const newBlog = await blogService.create({
-        title, author, url
+    dispatch(addBlog({ title, author, url }))
+      .then(action => {
+        notificationRef.current.show(
+          `Blog '${action.payload.title}' created successfully!`,
+          'success'
+        )
+        creationFormRef.current.toggleVisibility()
       })
-      setBlogs(
-        blogs
-          .concat(newBlog)
-          // .slice()
-          // .sort((b1, b2) => b1.likes - b2.likes)
-      )
-      notificationRef.current.show(
-        `Blog '${newBlog.title}' created successfully!`,
-        'success'
-      )
-      creationFormRef.current.toggleVisibility()
-    } catch (exception) {
-      notificationRef.current.show(
-        `Something went wrong: ${exception}`,
-        'failure'
-      )
-    }
+      .catch(exception => {
+        notificationRef.current.show(
+          `Something went wrong: ${exception}`,
+          'failure'
+        )
+      })
   }
 
   return (
@@ -95,7 +93,6 @@ const CreationForm = ({ blogs, setBlogs, notificationRef, creationFormRef }) => 
 }
 
 CreationForm.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
   notificationRef: PropTypes.object.isRequired,
   creationFormRef: PropTypes.object.isRequired
 }

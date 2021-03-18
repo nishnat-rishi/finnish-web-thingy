@@ -2,29 +2,36 @@ import React from 'react'
 
 import Blog from './Blog'
 
-import blogService from '../services/blogs'
+import { useDispatch, useSelector } from 'react-redux'
 
-const Blogs = ({ blogs, setBlogs, user, notificationRef }) => {
-  const like = async (blog) => {
-    const newBlog = await blogService
-      .update(blog.id,
-        { ...blog, likes: blog.likes + 1 }
-      )
+import {
+  likeBlog,
+  removeBlog,
+  selectArrangedBlogs
+} from '../features/blog/blogSlice'
+import { selectUser } from '../features/user/userSlice'
 
-    setBlogs(
-      blogs
-        .map(blog => blog.id !== newBlog.id ? blog : newBlog)
-    )
+const Blogs = ({ notificationRef }) => {
+
+  const dispatch = useDispatch()
+
+  const blogs = useSelector(selectArrangedBlogs)
+  const user = useSelector(selectUser)
+
+  const like = (blog) => {
+    dispatch(likeBlog(blog))
   }
 
-  const remove = async (blog) => {
-    if (window.confirm(`Are you sure you wanna delete ${blog.title} by ${blog.author}?`)) {
-      try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter(b => b.id !== blog.id))
-      } catch (exception) {
-        notificationRef.current.show(`${exception.response.data.error}`, 'failure')
-      }
+  const remove = (blog) => {
+    if (window.confirm(
+      `Are you sure you wanna delete ${blog.title} by ${blog.author}?`
+    )) {
+      dispatch(removeBlog(blog))
+        .catch(exception =>
+          notificationRef.current.show(
+            `${exception.response.data.error}`, 'failure'
+          )
+        )
     }
   }
 

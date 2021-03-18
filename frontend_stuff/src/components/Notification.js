@@ -1,8 +1,8 @@
 import React, { useImperativeHandle, useState } from 'react'
 
 const Notification = React.forwardRef((props, ref) => {
-  const [status, setStatus] = useState('success')
-  const [message, setMessage] = useState(null)
+  const [ status, setStatus ] = useState('success')
+  const [ message, setMessage ] = useState(null)
 
   const show = (message, status = 'success') => {
     setStatus(status)
