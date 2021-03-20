@@ -16,10 +16,11 @@ export const addBlog = createAsyncThunk(
 
 export const likeBlog = createAsyncThunk(
   'blogs/like',
-  async blog => await blogService
-    .update(blog.id,
-      { ...blog, likes: blog.likes + 1 }
-    )
+  async blog => {
+    const { likes } = await blogService.like(blog)
+    console.log()
+    return { id: blog.id, likes }
+  }
 )
 
 export const removeBlog = createAsyncThunk(
@@ -28,6 +29,12 @@ export const removeBlog = createAsyncThunk(
     await blogService.remove(blog.id)
     return blog
   }
+)
+
+export const addComment = createAsyncThunk(
+  'blogs/comment',
+  async (details) => await blogService
+    .comment(details.blog.id, details.comment)
 )
 
 const blogSlice = createSlice({
@@ -42,12 +49,19 @@ const blogSlice = createSlice({
     [addBlog.fulfilled]: (state, action) => {
       state.push(action.payload)
     },
-    [likeBlog.fulfilled]: (state, action) => {
-      const updatedBlog = action.payload
+    [likeBlog.pending]: (state, action) => {
+      const likedBlogId = action.meta.arg.id
       const indexToChange = state.findIndex(blog =>
-        blog.id === updatedBlog.id
+        blog.id === likedBlogId
       )
-      state[indexToChange] = updatedBlog
+      state[indexToChange].likes = null
+    },
+    [likeBlog.fulfilled]: (state, action) => {
+      const likedBlogDetails = action.payload
+      const indexToChange = state.findIndex(blog =>
+        blog.id === likedBlogDetails.id
+      )
+      state[indexToChange].likes = likedBlogDetails.likes
     },
     [removeBlog.fulfilled]: (state, action) => {
       const removedBlog = action.payload
@@ -55,12 +69,25 @@ const blogSlice = createSlice({
         blog.id === removedBlog.id
       )
       state.splice(indexToRemove, 1)
+    },
+    [addComment.fulfilled]: (state, action) => {
+      const comment = action.payload
+      const changedBlogIndex = state.findIndex(blog =>
+        blog.id === comment.blog.id
+      )
+      state[changedBlogIndex]
+        .comments
+        .unshift({ content: comment.content, id: comment.id })
     }
   }
 })
 
-export const selectRawBlogs = state => state
-  .blogs
+export const selectRawBlogs = state =>
+  state.blogs
+
+export const selectBlogWithId = id => state =>
+  selectRawBlogs(state)
+    .find(blog => blog.id === id)
 
 export const selectArrangedBlogs = state =>
   selectRawBlogs(state)
@@ -73,4 +100,5 @@ export const selectUsers = state =>
   )
     .fromPairs()
     .value()
+
 export default blogSlice

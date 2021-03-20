@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 import Notification from './components/Notification'
-import Home from './components/Home'
+import HomePage from './components/HomePage'
 import Users from './components/Users'
 import LoginForm from './components/LoginForm'
 
@@ -19,6 +19,7 @@ import {
 } from 'react-router-dom'
 import BlogPage from './components/BlogPage'
 import NavigationBar from './components/NavigationBar'
+import { Header } from 'semantic-ui-react'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -37,7 +38,7 @@ const App = () => {
   return <div>
     <Router>
       <NavigationBar />
-      <h1>Welcome to Bloglist!</h1>
+      <Header as='h1' dividing>Welcome to Bloglist!</Header>
       <Notification ref={notificationRef}/>
       <LoginForm
         notificationRef={notificationRef}
@@ -49,7 +50,7 @@ const App = () => {
           <BlogPage notificationRef={notificationRef} />
         </Route>
         <Route path='/'>
-          <Home
+          <HomePage
             {...{
               creationFormRef,
               notificationRef

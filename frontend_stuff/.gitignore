@@ -1,13 +1,5 @@
 node_modules
-_backup
 build
-public
 .env
-.eslintignore
-.eslintrc.js
-jest.config.js
-cypress.json
-jsconfig.json
 package-lock.json
-package.json
 README.md

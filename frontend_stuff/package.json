@@ -1,0 +1,71 @@
+{
+  "name": "part1",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.2",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.3",
+    "web-vitals": "^1.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "json-server -p3001 --watch db.json",
+    "eslint": "eslint .",
+    "set:bash": "npm config set script-shell D:/PFiles/Git/bin/bash.exe",
+    "test:ci": "CI=true npm test",
+    "test:ci:coverage": "CI=true npm test -- --coverage",
+    "switch:check_note": "git stash -u && git checkout master",
+    "switch:back_to_blog": "git checkout bloglist && git stash pop",
+    "switch:check_blog": "git stash -u && git checkout bloglist",
+    "switch:back_to_note": "git checkout master && git stash pop",
+    "cypress:open": "cypress open",
+    "test:e2e": "cypress run"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.6.3",
+    "@types/jest": "^26.0.20",
+    "cypress": "^6.5.0",
+    "deep-freeze": "0.0.1",
+    "eslint": "^7.20.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-jest": "^24.1.5",
+    "eslint-plugin-react": "^7.22.0",
+    "json-server": "^0.16.3"
+  },
+  "proxy": "http://localhost:3003"
+}

@@ -8,7 +8,7 @@ import { selectUser } from '../features/user/userSlice'
 
 import { useSelector } from 'react-redux'
 
-const Home = ({ creationFormRef, notificationRef }) => {
+const HomePage = ({ creationFormRef, notificationRef }) => {
 
   const user = useSelector(selectUser)
 
@@ -36,4 +36,4 @@ const Home = ({ creationFormRef, notificationRef }) => {
   )
 }
 
-export default Home
+export default HomePage

@@ -1,9 +1,3 @@
 node_modules
-_backup
-package.json
 package-lock.json
-Procfile
-jest.config.js
-jsconfig.json
-.eslintrc.js
-.eslintignore
+.env

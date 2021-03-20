@@ -22,8 +22,18 @@ const create = async (blogDetails) => {
 
 const update = async (blogId, blogDetails) => {
   const response = await axios.put(`${baseUrl}/${blogId}`, {
-    ...blogDetails, user: blogDetails.user.id
+    ...blogDetails,
+    user: blogDetails.user.id,
+    comments: blogDetails.comments.map(comment => comment.id)
   })
+  return response.data
+}
+
+const like = async (blog) => {
+  const response = await axios.put(`${baseUrl}/${blog.id}/like`, {
+    likes: blog.likes+1
+  })
+
   return response.data
 }
 
@@ -34,6 +44,14 @@ const remove = async (blogId) => {
   await axios.delete(`${baseUrl}/${blogId}`, config)
 }
 
-const blogService = { getAll, create, update, remove, setToken }
+const comment = async (blogId, comment) => {
+  const response = await axios.post(`${baseUrl}/${blogId}/comment`, {
+    content: comment
+  })
+
+  return response.data
+}
+
+const blogService = { getAll, create, like, remove, update, comment, setToken }
 
 export default blogService

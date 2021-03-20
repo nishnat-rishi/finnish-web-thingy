@@ -1,44 +1,47 @@
 import React, { useImperativeHandle, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectNotificationMessage,
-  selectNotificationStatus,
-  setNotification,
-  resetNotification
-} from '../features/notification/notificationSlice'
-
-import './Notification.css'
+import { Message, Transition } from 'semantic-ui-react'
 
 const Notification = React.forwardRef((props, ref) => {
 
-  const dispatch = useDispatch()
+  const [ status, setStatus ] = useState('success')
+  const [ message, setMessage ] = useState('Welcome to the blog!')
 
-  const status = useSelector(selectNotificationStatus)
-  const message = useSelector(selectNotificationMessage)
+  const [ visible, setVisible ] = useState(false)
 
-  const [ notificationTimeout, setNotificationTimeout ] = useState(null)
+  const [ visibleTimeout, setVisibleTimeout ] = useState(null)
 
   const show = (message, status = 'success') => {
-    window.clearTimeout(notificationTimeout)
-    dispatch(setNotification({ message, status }))
-    setNotificationTimeout(
+    window.clearTimeout(visibleTimeout)
+
+    setStatus(status)
+    setMessage(message)
+
+    setVisible(true)
+    setVisibleTimeout(
       window.setTimeout(() => {
-        dispatch(resetNotification())
+        setVisible(false)
       }, 5000)
     )
   }
+
   useImperativeHandle(
     ref, () => ({ show })
   )
 
+  const messageStyle = () =>
+    status === 'success'
+      ? { positive: true }
+      : { negative: true }
+
   return (
-    message
-      ?
-      <div className={status}>
+    <Transition
+      visible={visible}
+      animation='fade'
+      duration={500}>
+      <Message {...messageStyle()}>
         {message}
-      </div>
-      :
-      <div></div>
+      </Message>
+    </Transition>
   )
 })
 

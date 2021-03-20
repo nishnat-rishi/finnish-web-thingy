@@ -10,6 +10,12 @@ const blogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ],
   url: {
     type: String,
     required: true
@@ -28,4 +34,6 @@ blogSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Blog', blogSchema)
+const Blog = mongoose.model('Blog', blogSchema)
+
+module.exports = Blog

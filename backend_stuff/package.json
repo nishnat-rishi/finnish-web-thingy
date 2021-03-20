@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "start:test": "cross-env NODE_ENV=test node src/index.js",
+    "lint": "eslint .",
+    "build:ui": "rm -rf build && cd ../frontend_stuff && npm run build --prod && cp -r build ../backend_stuff/build",
+    "deploy": "git push heroku master",
+    "deploy:post:build:ui": "git add . && git commit -m uibuild && npm run deploy",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail --app pure-ocean-29658",
+    "set:bash": "npm config set script-shell D:/PFiles/Git/bin/bash.exe",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "test:note_api": "npm test -- src/tests/note_api.test.js",
+    "test:user_api": "npm test -- src/tests/user_api.test.js",
+    "test:blog_api": "npm test -- src/tests/blog_api.test.js",
+    "helper": "node src/utils/list_helper.js"
+  },
+  "author": "Kanishk Kaushik",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.16",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^7.20.0",
+    "jest": "^26.6.3",
+    "lodash": "^4.17.20",
+    "nodemon": "^2.0.7",
+    "supertest": "^6.1.3"
+  }
+}
