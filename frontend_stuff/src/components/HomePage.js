@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Blogs from './Blogs'
 import CreationForm from './CreationForm'
-import Togglable from './Togglable'
 
 import { selectUser } from '../features/user/userSlice'
 
 import { useSelector } from 'react-redux'
+import { Container } from 'semantic-ui-react'
 
-const HomePage = ({ creationFormRef, notificationRef }) => {
+const HomePage = ({ notificationRef }) => {
 
   const user = useSelector(selectUser)
 
@@ -16,20 +16,14 @@ const HomePage = ({ creationFormRef, notificationRef }) => {
     <>
       {user &&
       (
-        <div>
-          <Togglable
-            showLabel='Create New Blog'
-            hideLabel='Hide'
-            ref={creationFormRef}>
-            <CreationForm
-              notificationRef={notificationRef}
-              creationFormRef={creationFormRef}
-            />
-          </Togglable>
+        <Container>
+          <CreationForm
+            notificationRef={notificationRef}
+          />
           <Blogs
             notificationRef={notificationRef}
           />
-        </div>
+        </Container>
       )
       }
     </>

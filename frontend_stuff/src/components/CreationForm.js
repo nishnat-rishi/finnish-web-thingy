@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 
 import { addBlog } from '../features/blog/blogSlice'
 
-const CreationForm = ({ notificationRef, creationFormRef }) => {
+const CreationForm = ({ notificationRef }) => {
 
   const dispatch = useDispatch()
 
@@ -21,7 +21,6 @@ const CreationForm = ({ notificationRef, creationFormRef }) => {
           `Blog '${action.payload.title}' created successfully!`,
           'success'
         )
-        creationFormRef.current.toggleVisibility()
       })
       .catch(exception => {
         notificationRef.current.show(
@@ -93,8 +92,7 @@ const CreationForm = ({ notificationRef, creationFormRef }) => {
 }
 
 CreationForm.propTypes = {
-  notificationRef: PropTypes.object.isRequired,
-  creationFormRef: PropTypes.object.isRequired
+  notificationRef: PropTypes.object.isRequired
 }
 
 export default CreationForm

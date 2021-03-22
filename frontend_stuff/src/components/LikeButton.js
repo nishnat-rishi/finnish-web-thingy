@@ -3,12 +3,13 @@ import { useDispatch } from 'react-redux'
 import { Button, Icon, Label, Transition } from 'semantic-ui-react'
 import { likeBlog } from '../features/blog/blogSlice'
 
-const LikeButton = ({ blog }) => {
+const LikeButton = ({ blog, notificationRef }) => {
 
   const dispatch = useDispatch()
 
   const like = (blog) => {
     dispatch(likeBlog(blog))
+    notificationRef.current.show('You liked the blog!')
   }
 
   return (

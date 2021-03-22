@@ -13,7 +13,7 @@ const Blogs = () => {
 
   return (
     <div id='blog-list'>
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
       {blogs.map(blog =>
         <div className='blog' key={blog.id}>
           <Link to={`/blogs/${blog.id}`}>

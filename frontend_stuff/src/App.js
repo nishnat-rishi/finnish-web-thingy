@@ -19,13 +19,13 @@ import {
 } from 'react-router-dom'
 import BlogPage from './components/BlogPage'
 import NavigationBar from './components/NavigationBar'
-import { Header } from 'semantic-ui-react'
+import { Container, Header } from 'semantic-ui-react'
 
 const App = () => {
   const dispatch = useDispatch()
 
-  const creationFormRef = useRef()
   const notificationRef = useRef()
+  const fullPageRef = useRef()
 
   useEffect(() => {
     dispatch(fetchInitialBlogs())
@@ -35,29 +35,27 @@ const App = () => {
     dispatch(retrieveExistingUser())
   }, [ dispatch ])
 
-  return <div>
+  return <div ref={fullPageRef}>
     <Router>
-      <NavigationBar />
-      <Header as='h1' dividing>Welcome to Bloglist!</Header>
-      <Notification ref={notificationRef}/>
-      <LoginForm
-        notificationRef={notificationRef}
-      />
+      <Container>
+        <NavigationBar />
+        <Notification
+          ref={notificationRef}
+          {...{ fullPageRef }}
+        />
+        <Header as='h1' dividing>Welcome to Bloglist!</Header>
+        <LoginForm {...{ notificationRef }}/>
 
-      <Switch>
-        <Route path='/users' component={Users} />
-        <Route path='/blogs/:blogId'>
-          <BlogPage notificationRef={notificationRef} />
-        </Route>
-        <Route path='/'>
-          <HomePage
-            {...{
-              creationFormRef,
-              notificationRef
-            }}
-          />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route path='/users' component={Users} />
+          <Route path='/blogs/:blogId'>
+            <BlogPage {...{ notificationRef }} />
+          </Route>
+          <Route path='/'>
+            <HomePage {...{ notificationRef }} />
+          </Route>
+        </Switch>
+      </Container>
     </Router>
   </div>
 }

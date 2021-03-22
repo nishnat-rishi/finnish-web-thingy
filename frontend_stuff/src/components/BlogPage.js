@@ -59,9 +59,8 @@ const BlogPage = ({ notificationRef }) => {
           }}>
             Added by: <em>{blog.user.name}</em>
           </Container>
-          <LikeButton blog={blog} />
+          <LikeButton {... { blog, notificationRef }} />
           <RemoveButton {...{ user, blog, notificationRef }}/>
-
           <Divider />
           <CommentSection blog={blog} />
         </div>

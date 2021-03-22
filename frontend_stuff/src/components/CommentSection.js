@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Form, Header, List, Transition } from 'semantic-ui-react'
+import { Divider, Form, Header, List, Transition } from 'semantic-ui-react'
 import { addComment } from '../features/blog/blogSlice'
 
 const CommentSection = ({ blog }) => {
@@ -10,9 +10,9 @@ const CommentSection = ({ blog }) => {
   const dispatch = useDispatch()
 
   const addCommentFor = (blog, comment) => {
-    dispatch(addComment({ blog, comment })).then(() => {
-      setComment('')
-    })
+    dispatch(addComment({ blog, comment }))
+
+    setComment('') // Immediately removes comment from TextArea
   }
 
   return (
