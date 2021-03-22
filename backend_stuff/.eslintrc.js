@@ -66,6 +66,6 @@ module.exports = {
       'warn',
       'prefer-single'
     ],
-    'eqeqeq': 'error',
+    'eqeqeq': 'warn',
   },
 }

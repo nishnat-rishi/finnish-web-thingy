@@ -1,6 +1,5 @@
 import React, { useImperativeHandle, useState } from 'react'
 import {
-  Container,
   Message,
   Sticky,
   Transition
@@ -46,7 +45,8 @@ const Notification = React.forwardRef(
         : { negative: true }
 
     return (
-      <Sticky context={fullPageRef}
+      <Sticky
+        context={fullPageRef}
         style={{
           height: 0
         }}

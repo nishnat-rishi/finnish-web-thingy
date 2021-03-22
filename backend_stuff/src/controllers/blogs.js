@@ -73,6 +73,10 @@ blogRouter.delete('/:id', async (request, response, next) => {
     throw e
   }
 
+  const commentIds = blog.comments
+
+  await Comment.deleteMany({ _id: { $in: commentIds } })
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })

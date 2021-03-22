@@ -45,7 +45,6 @@ const App = () => {
         />
         <Header as='h1' dividing>Welcome to Bloglist!</Header>
         <LoginForm {...{ notificationRef }}/>
-
         <Switch>
           <Route path='/users' component={Users} />
           <Route path='/blogs/:blogId'>

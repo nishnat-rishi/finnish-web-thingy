@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Divider, Form, Header, List, Transition } from 'semantic-ui-react'
+import { Form, Header, List, Transition } from 'semantic-ui-react'
 import { addComment } from '../features/blog/blogSlice'
+
 
 const CommentSection = ({ blog }) => {
 
   const [ comment, setComment ] = useState('')
 
   const dispatch = useDispatch()
+
 
   const addCommentFor = (blog, comment) => {
     dispatch(addComment({ blog, comment }))
@@ -32,7 +34,7 @@ const CommentSection = ({ blog }) => {
           }}/>
       </Form>
       <List as='ol' style={{
-        paddingBottom: 20
+        paddingBottom: 20,
       }}>
         <Transition.Group
           animation='slide down'
@@ -45,7 +47,8 @@ const CommentSection = ({ blog }) => {
               key={comment.id}
             >
               {comment.content}
-            </List.Item>)}
+            </List.Item>)
+          }
         </Transition.Group>
       </List>
     </>
