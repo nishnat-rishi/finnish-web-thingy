@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import {
   ALL_PERSONS,
   CREATE_PERSON
-} from '../queries'
+} from '../queries-mutations'
 
 const PersonForm = ({ setError }) => {
   const [ name, setName ] = useState('')
