@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 
-import { FIND_PERSON } from '../queries-mutations'
+import { FIND_PERSON } from '../queries_mutations'
 
 const Persons = ({ persons }) => {
 

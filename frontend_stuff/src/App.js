@@ -4,7 +4,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import PhoneForm from './components/PhoneForm'
 
-import { ALL_PERSONS } from './queries-mutations'
+import { ALL_PERSONS } from './queries_mutations'
 
 const App = () => {
   const [ errorMessage, setErrorMessage ] = useState(null)
