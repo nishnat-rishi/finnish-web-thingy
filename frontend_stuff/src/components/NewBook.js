@@ -1,8 +1,13 @@
+import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
+import { ADD_BOOK } from '../queries_mutations'
 
 const NewBook = (props) => {
+
+  const [ addBook, result ] = useMutation(ADD_BOOK)
+
   const [ title, setTitle ] = useState('')
-  const [ author, setAuhtor ] = useState('')
+  const [ author, setAuthor ] = useState('')
   const [ published, setPublished ] = useState('')
   const [ genre, setGenre ] = useState('')
   const [ genres, setGenres ] = useState([])
@@ -18,7 +23,7 @@ const NewBook = (props) => {
 
     setTitle('')
     setPublished('')
-    setAuhtor('')
+    setAuthor('')
     setGenres([])
     setGenre('')
   }
@@ -26,6 +31,10 @@ const NewBook = (props) => {
   const addGenre = () => {
     setGenres(genres.concat(genre))
     setGenre('')
+  }
+
+  const clearGenres = () => {
+    setGenres([])
   }
 
   return (
@@ -42,7 +51,7 @@ const NewBook = (props) => {
           author
           <input
             value={author}
-            onChange={({ target }) => setAuhtor(target.value)}
+            onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
@@ -62,6 +71,9 @@ const NewBook = (props) => {
         </div>
         <div>
           genres: {genres.join(' ')}
+          <button onClick={clearGenres}>
+            clear genres
+          </button>
         </div>
         <button type='submit'>create book</button>
       </form>

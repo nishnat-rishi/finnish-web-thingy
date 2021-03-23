@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
-import { ALL_AUTHORS } from '../queries'
+import { ALL_AUTHORS } from '../queries_mutations'
 
 const Authors = (props) => {
 
