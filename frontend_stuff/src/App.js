@@ -1,62 +1,34 @@
-import React, { useEffect, useRef } from 'react'
 
-import Notification from './components/Notification'
-import HomePage from './components/HomePage'
-import Users from './components/Users'
-import LoginForm from './components/LoginForm'
-
-import { useDispatch } from 'react-redux'
-
-import {
-  fetchInitialBlogs
-} from './features/blog/blogSlice'
-import { retrieveExistingUser } from './features/user/userSlice'
-
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom'
-import BlogPage from './components/BlogPage'
-import NavigationBar from './components/NavigationBar'
-import { Container, Header } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
 
 const App = () => {
-  const dispatch = useDispatch()
+  const [ page, setPage ] = useState('authors')
 
-  const notificationRef = useRef()
-  const fullPageRef = useRef()
+  return (
+    <div>
+      <div>
+        <button onClick={() => setPage('authors')}>authors</button>
+        <button onClick={() => setPage('books')}>books</button>
+        <button onClick={() => setPage('add')}>add book</button>
+      </div>
 
-  useEffect(() => {
-    dispatch(fetchInitialBlogs())
-  }, [ dispatch ])
+      <Authors
+        show={page === 'authors'}
+      />
 
-  useEffect(() => {
-    dispatch(retrieveExistingUser())
-  }, [ dispatch ])
+      <Books
+        show={page === 'books'}
+      />
 
-  return <div ref={fullPageRef}>
-    <Router>
-      <Container>
-        <NavigationBar />
-        <Notification
-          ref={notificationRef}
-          {...{ fullPageRef }}
-        />
-        <Header as='h1' dividing>Welcome to Bloglist!</Header>
-        <LoginForm {...{ notificationRef }}/>
-        <Switch>
-          <Route path='/users' component={Users} />
-          <Route path='/blogs/:blogId'>
-            <BlogPage {...{ notificationRef }} />
-          </Route>
-          <Route path='/'>
-            <HomePage {...{ notificationRef }} />
-          </Route>
-        </Switch>
-      </Container>
-    </Router>
-  </div>
+      <NewBook
+        show={page === 'add'}
+      />
+
+    </div>
+  )
 }
 
 export default App
