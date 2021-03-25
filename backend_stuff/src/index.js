@@ -180,7 +180,7 @@ const resolvers = {
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })
-      if (!user || args.password !== 'secred') {
+      if (!user || args.password !== process.env.RANDOM_PASSWORD) {
         throw new UserInputError('wrong credentials')
       }
 
