@@ -1,16 +1,71 @@
 import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
-import { ADD_BOOK, ALL_BOOKS } from '../queries_mutations'
+import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from '../queries_mutations'
 
 const NewBookForm = (props) => {
 
   const [ addBook ] = useMutation(ADD_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS } ],
-    onError: error => console.log(JSON.stringify(error))
+    onError: error => {
+      if (error.graphQLErrors.length > 0) {
+        props.notify(error.graphQLErrors[0].message)
+      } else {
+        console.log(JSON.stringify(error))
+      }
+    },
+    update: (cache, mutationResult) => {
+      const booksData = cache.readQuery({ query: ALL_BOOKS })
+      const authorsData = cache.readQuery({ query: ALL_AUTHORS })
+
+      cache.writeQuery({
+        query: ALL_BOOKS,
+        data: {
+          ...booksData,
+          allBooks: [ ...booksData.allBooks, mutationResult.data.addBook ]
+        }
+      })
+
+      const authorExists = authorsData.allAuthors.map(a => a.name)
+        .includes(mutationResult.data.addBook.author.name)
+
+      if (!authorExists) {
+        cache.writeQuery({
+          query: ALL_AUTHORS,
+          data: {
+            ...authorsData,
+            allAuthors: [ ...authorsData.allAuthors, mutationResult.data.addBook.author ]
+          }
+        })
+      }
+
+      const genres = mutationResult.data.addBook.genres
+      let booksByGenreData
+      for (let genre of genres) {
+        booksByGenreData = cache.readQuery({
+          query: BOOKS_BY_GENRE,
+          variables: {
+            genre
+          }
+        })
+
+        cache.writeQuery({
+          query: BOOKS_BY_GENRE,
+          variables: {
+            genre
+          },
+          data: {
+            ...booksByGenreData,
+            allBooks: [
+              ...booksByGenreData.allBooks,
+              mutationResult.data.addBook
+            ]
+          }
+        })
+      }
+    }
   })
 
   const [ title, setTitle ] = useState('')
-  const [ author, setAuthor ] = useState('')
+  const [ authorName, setAuthorName ] = useState('')
   const [ published, setPublished ] = useState('')
   const [ genre, setGenre ] = useState('')
   const [ genres, setGenres ] = useState([])
@@ -25,13 +80,13 @@ const NewBookForm = (props) => {
     addBook({ variables: {
       title,
       published: Number(published),
-      author,
+      author: { name: authorName },
       genres
     } })
 
     setTitle('')
     setPublished('')
-    setAuthor('')
+    setAuthorName('')
     setGenres([])
     setGenre('')
   }
@@ -56,10 +111,10 @@ const NewBookForm = (props) => {
           />
         </div>
         <div>
-          author
+          author name
           <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
+            value={authorName}
+            onChange={({ target }) => setAuthorName(target.value)}
           />
         </div>
         <div>

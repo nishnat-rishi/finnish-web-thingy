@@ -145,13 +145,11 @@ const resolvers = {
         throw new AuthenticationError('User not logged in!')
       }
 
-      let newAuthor
-
-      const author = await Author.findOne(
+      let newAuthor = await Author.findOne(
         { name: { $eq: args.author.name } }
       )
 
-      if (author) {
+      if (!newAuthor) {
         try {
           newAuthor = await new Author({
             name: args.author.name
@@ -162,7 +160,6 @@ const resolvers = {
             { invalidArgs: args }
           )
         }
-
       }
 
       const newBook = new Book({
