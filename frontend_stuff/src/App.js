@@ -1,5 +1,6 @@
-import { useQuery } from '@apollo/client'
+import { useApolloClient, useQuery } from '@apollo/client'
 import React, { useState } from 'react'
+import LoginForm from './components/LoginForm'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import PhoneForm from './components/PhoneForm'
@@ -7,9 +8,11 @@ import PhoneForm from './components/PhoneForm'
 import { ALL_PERSONS } from './queries_mutations'
 
 const App = () => {
-  const [ errorMessage, setErrorMessage ] = useState(null)
 
+  const [ token, setToken ] = useState(null)
+  const [ errorMessage, setErrorMessage ] = useState(null)
   const result = useQuery(ALL_PERSONS)
+  const client = useApolloClient()
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -18,19 +21,35 @@ const App = () => {
     }, 10000)
   }
 
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
+  if (!token) {
+    return (
+      <div>
+        <Notify errorMessage={errorMessage} />
+        <h2>Login</h2>
+        <LoginForm
+          setToken={setToken}
+          setError={notify}
+        />
+      </div>
+    )
+  }
+
+  if (result.loading) {
+    return <div>loading...</div>
+  }
+
   return (
     <>
-      {result.loading ? (
-        <div>loading...</div>
-      ) : (
-        <>
-          <Notify errorMessage={errorMessage} />
-          <Persons persons = {result.data.allPersons} />
-          <PersonForm setError={notify} />
-          <PhoneForm setError={notify} />
-        </>
-      )
-      }
+      <Notify errorMessage={errorMessage} />
+      <Persons persons = {result.data.allPersons} />
+      <PersonForm setError={notify} />
+      <PhoneForm setError={notify} />
     </>
   )
 }
