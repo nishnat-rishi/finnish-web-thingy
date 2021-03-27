@@ -10,6 +10,9 @@ const {
   AuthenticationError
 } = require('apollo-server')
 
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
+
 const Book = require('./models/Book')
 const Author = require('./models/Author')
 const User = require('./models/User')
@@ -95,6 +98,10 @@ const typeDefs = gql`
       password: String!
     ): Token
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `
 
 const resolvers = {
@@ -177,6 +184,8 @@ const resolvers = {
         )
       }
 
+      pubsub.publish('BOOK_ADDED', { bookAdded: savedBook })
+
       return savedBook
     },
     editAuthor: async (root, args, context) => {
@@ -242,6 +251,11 @@ const resolvers = {
 
       return token
     }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator([ 'BOOK_ADDED' ])
+    }
   }
 }
 
@@ -266,6 +280,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

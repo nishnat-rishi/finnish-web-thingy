@@ -1,5 +1,17 @@
 import { gql } from 'graphql-tag'
 
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    author {
+      name
+    }
+    published
+    genres
+    id
+  }
+`
+
 export const ME = gql`
   query me {
     me {
@@ -46,6 +58,16 @@ export const ADD_BOOK = gql`
         id
       }
     }
+`
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+
+  ${BOOK_DETAILS}
 `
 
 export const EDIT_BIRTH_YEAR = gql`

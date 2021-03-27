@@ -1,4 +1,5 @@
 
+import { useApolloClient, useSubscription } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -6,11 +7,15 @@ import LoginForm from './components/LoginForm'
 import NewBookForm from './components/NewBookForm'
 import Recommendations from './components/Recommendations'
 import YearChangeForm from './components/YearChangeForm'
+import { ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE, BOOK_ADDED } from './queries_mutations'
 
 const App = () => {
   const [ page, setPage ] = useState('authors')
-
   const [ token, setToken ] = useState(null)
+  const [ error, setError ] = useState(null)
+  const [ errorTimeout, setErrorTimeout ] = useState(null)
+
+  const client = useApolloClient()
 
   useEffect(() => {
     const prevToken = localStorage.getItem('gql-authors-user')
@@ -19,8 +24,68 @@ const App = () => {
     }
   }, [])
 
-  const [ error, setError ] = useState(null)
-  const [ errorTimeout, setErrorTimeout ] = useState(null)
+  const updateCacheWith = (cache, addedBook) => {
+    const booksData = cache.readQuery({ query: ALL_BOOKS })
+    const authorsData = cache.readQuery({ query: ALL_AUTHORS })
+
+    if (!booksData.allBooks.map(b => b.id).includes(addedBook.id)) {
+      cache.writeQuery({
+        query: ALL_BOOKS,
+        data: {
+          ...booksData,
+          allBooks: [ ...booksData.allBooks, addedBook ]
+        }
+      })
+
+      const authorExists = authorsData.allAuthors.map(a => a.name)
+        .includes(addedBook.author.name)
+
+      if (!authorExists) {
+        cache.writeQuery({
+          query: ALL_AUTHORS,
+          data: {
+            ...authorsData,
+            allAuthors: [ ...authorsData.allAuthors, addedBook.author ]
+          }
+        })
+      }
+
+      const genres = addedBook.genres
+      let booksByGenreData
+      for (let genre of genres) {
+        booksByGenreData = cache.readQuery({
+          query: BOOKS_BY_GENRE,
+          variables: {
+            genre
+          }
+        })
+
+        if (booksByGenreData) {  // if this query has been made
+          cache.writeQuery({
+            query: BOOKS_BY_GENRE,
+            variables: {
+              genre
+            },
+            data: {
+              ...booksByGenreData,
+              allBooks: [
+                ...booksByGenreData.allBooks,
+                addedBook
+              ]
+            }
+          })
+        }
+      }
+    }
+  }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      notify(`${addedBook.title} added!`)
+      updateCacheWith(client, addedBook)
+    }
+  })
 
   const notify = (message) => {
     window.clearTimeout(errorTimeout)
@@ -86,6 +151,7 @@ const App = () => {
         show={page === 'add'}
         token={token}
         notify={notify}
+        updateCacheWith={updateCacheWith}
       />
 
       <YearChangeForm

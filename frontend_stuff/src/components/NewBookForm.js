@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from '../queries_mutations'
+import { ADD_BOOK } from '../queries_mutations'
 
 const NewBookForm = (props) => {
 
@@ -13,54 +13,7 @@ const NewBookForm = (props) => {
       }
     },
     update: (cache, mutationResult) => {
-      const booksData = cache.readQuery({ query: ALL_BOOKS })
-      const authorsData = cache.readQuery({ query: ALL_AUTHORS })
-
-      cache.writeQuery({
-        query: ALL_BOOKS,
-        data: {
-          ...booksData,
-          allBooks: [ ...booksData.allBooks, mutationResult.data.addBook ]
-        }
-      })
-
-      const authorExists = authorsData.allAuthors.map(a => a.name)
-        .includes(mutationResult.data.addBook.author.name)
-
-      if (!authorExists) {
-        cache.writeQuery({
-          query: ALL_AUTHORS,
-          data: {
-            ...authorsData,
-            allAuthors: [ ...authorsData.allAuthors, mutationResult.data.addBook.author ]
-          }
-        })
-      }
-
-      const genres = mutationResult.data.addBook.genres
-      let booksByGenreData
-      for (let genre of genres) {
-        booksByGenreData = cache.readQuery({
-          query: BOOKS_BY_GENRE,
-          variables: {
-            genre
-          }
-        })
-
-        cache.writeQuery({
-          query: BOOKS_BY_GENRE,
-          variables: {
-            genre
-          },
-          data: {
-            ...booksByGenreData,
-            allBooks: [
-              ...booksByGenreData.allBooks,
-              mutationResult.data.addBook
-            ]
-          }
-        })
-      }
+      props.updateCacheWith(cache, mutationResult.data.addBook)
     }
   })
 
