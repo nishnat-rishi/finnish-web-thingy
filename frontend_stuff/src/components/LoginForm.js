@@ -10,7 +10,11 @@ const LoginForm = ({
 
   const [ login, result ] = useMutation(LOGIN, {
     onError: (error) => {
-      setError(error.graphQLErrors[0].message)
+      if (error.graphQLErrors.length > 0) {
+        setError(error.graphQLErrors[0].message)
+      } else {
+        console.log(JSON.stringify(error))
+      }
     }
   })
 
@@ -18,7 +22,11 @@ const LoginForm = ({
     if (result.data) {
       const token = result.data.login.value
       setToken(token)
-      localStorage.setItem('gql-main-user', token)
+      localStorage.setItem('gql-main-user', JSON.stringify({
+        username, token
+      }))
+      setUsername('')
+      setPassword('')
     }
   }, [result.data]) // eslint-disable-line
 

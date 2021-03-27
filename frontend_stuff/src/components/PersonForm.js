@@ -2,11 +2,10 @@ import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
 
 import {
-  ALL_PERSONS,
   CREATE_PERSON
 } from '../queries_mutations'
 
-const PersonForm = ({ setError }) => {
+const PersonForm = ({ setError, updateCacheWith }) => {
   const [ name, setName ] = useState('')
   const [ phone, setPhone ] = useState('')
   const [ street, setStreet ] = useState('')
@@ -14,20 +13,14 @@ const PersonForm = ({ setError }) => {
 
   const [ createPerson ] = useMutation(CREATE_PERSON, {
     onError: (error) => {
-      setError((error.graphQLErrors[0].message))
+      if (error.graphQLErrors.length > 0) {
+        setError((error.graphQLErrors[0].message))
+      } else {
+        console.log(JSON.stringify(error))
+      }
     },
     update: (store, response) => {
-      const dataInStore = store.readQuery({ query: ALL_PERSONS })
-      store.writeQuery({
-        query: ALL_PERSONS,
-        data: {
-          ...dataInStore,
-          allPersons: [
-            ...dataInStore.allPersons,
-            response.data.addPerson
-          ]
-        }
-      })
+      updateCacheWith(response.data.addPerson)
     }
   })
 

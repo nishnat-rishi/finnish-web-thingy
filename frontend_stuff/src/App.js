@@ -1,18 +1,61 @@
-import { useApolloClient, useQuery } from '@apollo/client'
-import React, { useState } from 'react'
+import {
+  useApolloClient,
+  useQuery,
+  useSubscription
+} from '@apollo/client'
+import React, { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import PhoneForm from './components/PhoneForm'
 
-import { ALL_PERSONS } from './queries_mutations'
+import { ALL_PERSONS, PERSON_ADDED } from './queries_mutations'
 
 const App = () => {
 
   const [ token, setToken ] = useState(null)
+  const [ username, setUsername ] = useState(null)
   const [ errorMessage, setErrorMessage ] = useState(null)
+
   const result = useQuery(ALL_PERSONS)
+
   const client = useApolloClient()
+
+  useEffect(() => {
+    const storedInfo = localStorage.getItem('gql-main-user')
+    if (storedInfo) {
+      setToken(JSON.parse(storedInfo).token)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      const storedInfo = localStorage.getItem('gql-main-user')
+      setUsername(JSON.parse(storedInfo).username)
+    } else {
+      setUsername(null)
+    }
+  }, [ token ])
+
+  const updateCacheWith = (addedPerson) => {
+    const personsData = client.readQuery({ query: ALL_PERSONS })
+    if (!personsData.allPersons
+      .map(p => p.id)
+      .includes(addedPerson.id)) {
+      client.writeQuery({
+        query: ALL_PERSONS,
+        data: { allPersons: personsData.allPersons.concat(addedPerson) }
+      })
+    }
+  }
+
+  useSubscription(PERSON_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedPerson = subscriptionData.data.personAdded
+      notify(`${addedPerson.name} added`)
+      updateCacheWith(addedPerson)
+    }
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -44,11 +87,23 @@ const App = () => {
     return <div>loading...</div>
   }
 
+  if (result.error) {
+    return <div>error!!!</div>
+  }
+
   return (
     <>
+      <div>
+        <strong>{username}</strong> <em>logged in.</em>
+        {' '}
+        <button onClick={logout}>Logout</button>
+      </div>
       <Notify errorMessage={errorMessage} />
-      <Persons persons = {result.data.allPersons} />
-      <PersonForm setError={notify} />
+      <Persons persons={result.data.allPersons} />
+      <PersonForm
+        setError={notify}
+        updateCacheWith={updateCacheWith}
+      />
       <PhoneForm setError={notify} />
     </>
   )
